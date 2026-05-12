@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - target: bun-windows-x64
+            output: lcg-pair-windows-x64.exe
+          - target: bun-linux-x64
+            output: lcg-pair-linux-x64
+          - target: bun-linux-arm64
+            output: lcg-pair-linux-arm64
+          - target: bun-darwin-x64
+            output: lcg-pair-darwin-x64
+          - target: bun-darwin-arm64
+            output: lcg-pair-darwin-arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun build --compile --target=${{ matrix.target }} --outfile dist/${{ matrix.output }} src/pair.ts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output }}
+          path: dist/${{ matrix.output }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: checksums
+        run: |
+          cd dist
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          body: |
+            built by [this workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) from commit `${{ github.sha }}`.
+
+            verify your download — `SHA256SUMS.txt` is generated inside the same workflow run, on a clean ubuntu runner with a frozen lockfile, from the source at this tag.
+
+            what it does: bridges in-game `esc → pairing → enable` to your lcg dashboard. it does NOT see your steam password — sign-in goes to steamcommunity.com's own login page, you get back a rust+ scoped token (same thing the official rust+ companion mobile app gets). source you're looking at right now is what compiled into the binary.
