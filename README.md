@@ -43,4 +43,9 @@ bun install
 bun run build:all
 ```
 
-produces four binaries in `dist/` — windows-x64, darwin-arm64, darwin-x64, linux-x64. the published release assets are built with this exact command from the frozen lockfile.
+produces four binaries in `dist/` — windows-x64, darwin-arm64, darwin-x64, linux-x64.
+
+the published release assets run the same commands in CI: pushing a `v*` tag triggers
+[`.forgejo/workflows/release.yml`](.forgejo/workflows/release.yml), which builds all four on a clean
+runner from the frozen lockfile, generates `SHA256SUMS.txt` in the same run, and attaches everything
+to the release. nothing is uploaded by hand.
