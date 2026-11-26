@@ -77,7 +77,7 @@ async function main(): Promise<void> {
   console.log("Within a few seconds the server will appear at");
   console.log("https://lcg.heroinhound.cc/dashboard");
   console.log();
-  console.log("Source + checksums: https://git.fable.bz/zyu/lcg-pair");
+  console.log("Source + checksums: https://github.com/escaliba/lcg-pair");
 }
 
 main()

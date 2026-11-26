@@ -17,7 +17,7 @@ after that, every in-game pair press shows up on your dashboard in a few seconds
 
 ## download
 
-[releases page](https://git.fable.bz/zyu/lcg-pair/releases) → pick the binary for your OS. `SHA256SUMS.txt` is in every release.
+[releases page](https://github.com/escaliba/lcg-pair/releases) → pick the binary for your OS. `SHA256SUMS.txt` is in every release.
 
 verify with `sha256sum -c SHA256SUMS.txt` (linux/mac) or `Get-FileHash` on windows.
 
@@ -46,6 +46,6 @@ bun run build:all
 produces four binaries in `dist/` — windows-x64, darwin-arm64, darwin-x64, linux-x64.
 
 the published release assets run the same commands in CI: pushing a `v*` tag triggers
-[`.forgejo/workflows/release.yml`](.forgejo/workflows/release.yml), which builds all four on a clean
+[`.github/workflows/release.yml`](.github/workflows/release.yml), which builds all four on a clean
 runner from the frozen lockfile, generates `SHA256SUMS.txt` in the same run, and attaches everything
 to the release. nothing is uploaded by hand.
